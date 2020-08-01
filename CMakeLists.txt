@@ -15,4 +15,4 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 ###	SETTING INSTALLED LIBRARIES	###
 
-add_subdirectory("${SRC_DIR}" ${TARGET_DIR})
+add_subdirectory("${SRC_DIR}")
