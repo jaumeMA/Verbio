@@ -42,7 +42,9 @@ enum class NumberMultiplier
 	None = 0,
 	Hundred = 2,
 	Thousand = 3,
+	HundredThousand = 5,
 	Million = 6,
+	HundredMillion = 8,
 	Billion = 9
 };
 
@@ -56,10 +58,10 @@ public:
 	typedef number_container::reverse_iterator reverse_iterator;
 	typedef number_container::const_reverse_iterator const_reverse_iterator;
 
-	number_intermediate_representation() = default;
+	number_intermediate_representation(unsigned int m_maxMultiplier);
 
 	void add(NumberPos i_number);
-	void set_multiplier(NumberMultiplier i_multiplier);
+	bool try_set_multiplier(NumberMultiplier i_multiplier);
 	bool empty() const;
 	size_t size() const;
 
@@ -75,6 +77,7 @@ public:
 
 private:
 	std::vector<std::pair<NumberPos,NumberMultiplier>> m_tokens;
+	const unsigned int m_maxMultiplier;
 };
 
 }

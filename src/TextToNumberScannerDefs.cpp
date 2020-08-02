@@ -3,16 +3,56 @@
 namespace vtf
 {
 
+number_intermediate_representation::number_intermediate_representation(unsigned int i_maxMultiplier)
+: m_maxMultiplier(i_maxMultiplier)
+{
+}
 void number_intermediate_representation::add(NumberPos i_number)
 {
 	return m_tokens.push_back({i_number,NumberMultiplier::None});
 }
-void number_intermediate_representation::set_multiplier(NumberMultiplier i_multiplier)
+bool number_intermediate_representation::try_set_multiplier(NumberMultiplier i_multiplier)
 {
-	if (m_tokens.empty() == false)
+	//checkin stage
+	unsigned int prevMultiplier = 0;
+	std::vector<std::pair<NumberPos,NumberMultiplier>>::reverse_iterator itTokenCheck = m_tokens.rbegin();
+	for (; itTokenCheck != m_tokens.rend(); ++itTokenCheck)
 	{
-		m_tokens[m_tokens.size() - 1].second = i_multiplier;
+		if (itTokenCheck->second < i_multiplier)
+		{
+			prevMultiplier = static_cast<unsigned int>(itTokenCheck->second) + static_cast<unsigned int>(i_multiplier);
+		}
+		else if(prevMultiplier >= static_cast<unsigned int>(itTokenCheck->second))
+		{
+			return false;
+		}
+		else
+		{
+			break;
+		}
 	}
+
+	//apply max multiplier rule
+	if (prevMultiplier > m_maxMultiplier)
+	{
+		return false;
+	}
+
+	//apply stage
+	std::vector<std::pair<NumberPos,NumberMultiplier>>::reverse_iterator itTokenApply = m_tokens.rbegin();
+	for (; itTokenApply != m_tokens.rend(); ++itTokenApply)
+	{
+		if (itTokenApply->second < i_multiplier)
+		{
+			itTokenApply->second = static_cast<NumberMultiplier>(static_cast<unsigned int>(itTokenApply->second) + static_cast<unsigned int>(i_multiplier));
+		}
+		else
+		{
+			break;
+		}
+	}
+
+	return true;
 }
 bool number_intermediate_representation::empty() const
 {

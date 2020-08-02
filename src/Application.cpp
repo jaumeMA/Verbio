@@ -10,14 +10,24 @@ void dumpFormattedTextIntoScreen(const std::string& i_formattedText)
 
 int main(int argc, char* argv[])
 {
-	vtf::TextFormatter txtFormatter;
-	vtf::KeyboardInputHandler keyboardInputHandler;
+	if (argc == 2)
+	{
+		unsigned int maxMultiplier = atoi(argv[1]);
 
-	txtFormatter.call_onNewTextFormatted = dumpFormattedTextIntoScreen;
+		vtf::TextFormatter txtFormatter(maxMultiplier);
+		vtf::KeyboardInputHandler keyboardInputHandler;
 
-	std::cout << "Introduce the text you want to format and press intro. Type quit for shuting down" << std::endl;
+		txtFormatter.call_onNewTextFormatted = dumpFormattedTextIntoScreen;
 
-	txtFormatter.init(keyboardInputHandler);
+		std::cout << "Introduce the text you want to format and press intro. Type quit for shuting down" << std::endl;
+
+		txtFormatter.init(keyboardInputHandler);
+	}
+	else
+	{
+		std::cout << "You shall pass as input argument maximum multipler (i.e. 3 for up to 1000 number value, 6 for up to 1000000 number value and so on)" << std::endl;
+	}
+
 
 	return 0;
 }

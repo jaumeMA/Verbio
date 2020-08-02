@@ -85,6 +85,10 @@ NumberPlace fromNumberMultiplierToNumberPlace(NumberMultiplier i_number)
 	}
 }
 
+TextToNumberRuleAcceptor::TextToNumberRuleAcceptor(unsigned int i_maxMultiplier)
+: m_resolvedTokens(i_maxMultiplier)
+{
+}
 bool TextToNumberRuleAcceptor::accept(const token& i_token)
 {
 	if (m_acceptingTokens == false)
@@ -138,11 +142,13 @@ bool TextToNumberRuleAcceptor::accept(const token& i_token)
 				{ // this is for dates
 					if (m_resolvedTokens.size() == 1)
 					{
-						m_state = NumberPlace::Tens;
-						m_resolvedTokens.set_multiplier(NumberMultiplier::Hundred);
-						m_resolvedTokens.add(static_cast<NumberPos>(currTokenPlacePair.second));
-						m_lastAcceptedToken = i_token.second.m_pos;
-						m_acceptingTokens = true;
+						if (m_resolvedTokens.try_set_multiplier(NumberMultiplier::Hundred))
+						{
+							m_state = NumberPlace::Tens;
+							m_resolvedTokens.add(static_cast<NumberPos>(currTokenPlacePair.second));
+							m_lastAcceptedToken = i_token.second.m_pos;
+							m_acceptingTokens = true;
+						}
 					}
 				}
 				else
@@ -157,20 +163,14 @@ bool TextToNumberRuleAcceptor::accept(const token& i_token)
 			}
 			default:
 			{
-				if (m_state == NumberPlace::None)
+				if (m_state == NumberPlace::Units || m_state == NumberPlace::Tens || (m_state != NumberPlace::None && m_state < currTokenPlacePair.first))
 				{
-					m_state = currTokenPlacePair.first;
-					m_resolvedTokens.add(NumberPos::One);
-					m_resolvedTokens.set_multiplier(static_cast<NumberMultiplier>(currTokenPlacePair.second));
-					m_lastAcceptedToken = i_token.second.m_pos;
-					m_acceptingTokens = true;
-				}
-				else if (m_state == NumberPlace::Units || m_state == NumberPlace::Tens)
-				{
-					m_state = currTokenPlacePair.first;
-					m_resolvedTokens.set_multiplier(static_cast<NumberMultiplier>(currTokenPlacePair.second));
-					m_lastAcceptedToken = i_token.second.m_pos;
-					m_acceptingTokens = true;
+					if (m_resolvedTokens.try_set_multiplier(static_cast<NumberMultiplier>(currTokenPlacePair.second)))
+					{
+						m_state = currTokenPlacePair.first;
+						m_lastAcceptedToken = i_token.second.m_pos;
+						m_acceptingTokens = true;
+					}
 				}
 			}
 		}

@@ -11,9 +11,9 @@
 namespace vtf
 {
 
-TextFormatter::TextFormatter()
+TextFormatter::TextFormatter(unsigned int i_maxMultiplier)
+: m_maxMultiplier(i_maxMultiplier)
 {
-
 }
 void TextFormatter::init(IInputHandler& i_inputHandler)
 {
@@ -25,7 +25,7 @@ void TextFormatter::onNewStream(std::istream& i_stream)
 {
 	StreamTokenizer streamTokenizer;
 	TokenScanner tokenScanner(streamTokenizer);
-	ScannerRule FreeTextRule(std::make_unique<TextToNumberRuleAcceptor>(),std::make_unique<TextToNumberRuleTransformer>());
+	ScannerRule FreeTextRule(std::make_unique<TextToNumberRuleAcceptor>(m_maxMultiplier),std::make_unique<TextToNumberRuleTransformer>());
 
 	tokenScanner.register_rule(std::move(FreeTextRule));
 

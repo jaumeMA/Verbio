@@ -22,7 +22,7 @@ enum class NumberPlace : uint8_t
 class TextToNumberRuleAcceptor : public IScannerRuleAcceptor
 {
 public:
-	TextToNumberRuleAcceptor() = default;
+	TextToNumberRuleAcceptor(unsigned int i_maxMultiplier);
 
 private:
 	bool accept(const token&) override;
