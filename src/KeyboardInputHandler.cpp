@@ -31,7 +31,9 @@ void KeyboardInputHandler::update()
 		}
 		else
 		{
-			call_onNewStream(std::stringstream(newSentence));
+			std::stringstream newStream(newSentence);
+
+			call_onNewStream(newStream);
 		}
 	}
 }
